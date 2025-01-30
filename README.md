@@ -1,15 +1,14 @@
-# Study Sprint 📚✨
+# HireEasy 💼
 
-Study Sprint is a productivity-focused app designed to help students plan, organize, and track their study sessions efficiently. With features like a drag-and-drop calendar, personalized reminders, progress tracking, and resource management, this app is your ultimate companion for conquering deadlines and achieving your academic goals.
+A seamless, easy-to-use hiring automation platform that streamlines HR workflows—from job postings to interviews—by ranking resumes and managing interview scheduling effortlessly. Our platform transforms hiring into a fast, efficient, and effortless process.
 
 ## Features
 
-- Drag-and-drop calendar for planning study sessions.
-- Personalized reminders to keep you on track.
-- Progress tracking with visual analytics.
-- Resource management for attaching study materials.
-
-By combining intuitive tools and engaging features, Study Sprint transforms study planning into a fun and interactive experience, helping students achieve their academic goals more effectively.
+- Automated Job Posting: HR can create customizable job listings.
+- Resume Parsing & Ranking: AI-driven keyword-based resume ranking for efficient shortlisting.
+- Automated Candidate Communications: Streamline candidate interactions with automated emails, assessments, and interview updates.
+- Smart Interview Management: Interviewers can accept invites, schedule, manage, and track interviews.
+- Feedback & Decision Support: View past interviews and provide structured feedback for informed hiring.
 
 ## Group Members
 
