@@ -4,7 +4,7 @@ A seamless, easy-to-use hiring automation platform that streamlines HR workflows
 
 ## Features
 
-- Automated Job Posting: HR can create customizable job listings.
+- Job Posting: HR can choose from a variety of customizable templates to create job listings.
 - Resume Parsing & Ranking: AI-driven keyword-based resume ranking for efficient shortlisting.
 - Automated Candidate Communications: Streamline candidate interactions with automated emails, assessments, and interview updates.
 - Smart Interview Management: Interviewers can accept invites, schedule, manage, and track interviews.
