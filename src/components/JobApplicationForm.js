@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/JobApplicationForm.css"; // Import the CSS file
 
 const JobApplicationForm = () => {
   // State to manage form inputs
@@ -29,7 +30,7 @@ const JobApplicationForm = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}>
+    <div className="form-container">
       <h2>Job Application</h2>
       <form onSubmit={handleSubmit}>
         {/* First Name */}
@@ -54,22 +55,20 @@ const JobApplicationForm = () => {
 
         {/* Gender */}
         <label>Gender:</label>
-        <div>
+        <div className="radio-group">
           <input type="radio" name="gender" value="Male" onChange={handleChange} required /> Male
           <input type="radio" name="gender" value="Female" onChange={handleChange} required /> Female
         </div>
 
         {/* Veteran Status */}
         <label>Are you a veteran?</label>
-        <div>
+        <div className="radio-group">
           <input type="radio" name="veteran" value="Yes" onChange={handleChange} required /> Yes
           <input type="radio" name="veteran" value="No" onChange={handleChange} required /> No
         </div>
 
         {/* Submit Button */}
-        <button type="submit" style={{ marginTop: "10px", padding: "8px", backgroundColor: "blue", color: "white", border: "none", borderRadius: "5px" }}>
-          Submit
-        </button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );
