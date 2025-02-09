@@ -111,17 +111,17 @@ export function ShareJob() {
     setQuestions(questionData);
   };
 
-  // Handle input changes for answers
+  // Handle input changes for answers (kept for UI display)
   const handleAnswerChange = (e) => {
     setAnswers({ ...answers, [e.target.name]: e.target.value });
   };
 
-  // Submit application
+  // Submit application (Now sending only JobID & FormID)
   const handleSubmit = (e) => {
     e.preventDefault();
     const finalSubmission = {
       JobID: selectedJobId,
-      ...answers,
+      FormID: selectedFormId,
     };
     console.log("Job Application Submitted:", finalSubmission);
     alert("Job Application Submitted Successfully!");

@@ -83,4 +83,31 @@ export function Register() {
   );
 }
 
+// Styles (copied from Login.jsx)
+const inputStyle = {
+  width: "250px",
+  padding: "10px",
+  marginBottom: "10px",
+  fontSize: "16px",
+};
+
+const buttonStyle = {
+  padding: "10px 20px",
+  fontSize: "16px",
+  cursor: "pointer",
+  backgroundColor: "#007bff",
+  color: "white",
+  border: "none",
+  borderRadius: "5px",
+};
+
+const linkStyle = {
+  background: "none",
+  border: "none",
+  color: "#007bff",
+  cursor: "pointer",
+  fontSize: "16px",
+  textDecoration: "underline",
+};
+
 export default Register;
