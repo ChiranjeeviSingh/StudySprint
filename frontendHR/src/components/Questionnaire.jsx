@@ -43,85 +43,81 @@ export function Questionnaire() {
 
   return (
     <div
-      style={{ textAlign: "center", marginTop: "20px", position: "relative" }}
+      className="relative min-h-screen bg-cover bg-center flex justify-center items-center"
+      style={{
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8am9iJTIwcG9ydGFsfGVufDB8fDB8fHww')",
+      }}
     >
-      {/* Dashboard Button */}
+      {/* ✅ Dashboard Button Positioned at Top-Left */}
       <button
         onClick={() => navigate("/dashboard")}
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          padding: "5px 10px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
+        className="absolute top-4 left-4 px-4 py-2 text-lg bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
       >
         ⬅️ Dashboard
       </button>
 
-      <h2>Create a Questionnaire</h2>
+      {/* ✅ Enlarged Card Layout for the Form */}
+      <div className="bg-white bg-opacity-90 shadow-lg rounded-xl p-10 w-full max-w-2xl h-[700px] overflow-y-auto">
+        <h2 className="text-3xl font-semibold text-center mb-8">
+          Create a Questionnaire
+        </h2>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ maxWidth: "600px", margin: "auto" }}
-      >
-        {/* Form ID Input */}
-        <div style={{ marginBottom: "10px" }}>
-          <label>Form ID (Required): </label>
-          <input
-            type="text"
-            name="FormID"
-            value={formData.FormID}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "8px", fontSize: "16px" }}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          {/* Form ID Input */}
+          <div className="mb-4">
+            <label className="block font-medium mb-1 text-lg">
+              Form ID (Required):
+            </label>
+            <input
+              type="text"
+              name="FormID"
+              value={formData.FormID}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter Form ID"
+            />
+          </div>
 
-        {/* Question Inputs as Bigger Textareas */}
-        {Object.keys(formData)
-          .filter((key) => key !== "FormID")
-          .map((key, index) => (
-            <div key={index} style={{ marginBottom: "10px" }}>
-              <label>{`Question ${index + 1}:`}</label>
-              <textarea
-                name={key}
-                value={formData[key]}
-                onChange={handleChange}
-                rows="2" // Multi-line
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  fontSize: "16px",
-                  resize: "none",
-                }}
-              />
-            </div>
-          ))}
+          {/* Questions as Textareas */}
+          {Object.keys(formData)
+            .filter((key) => key !== "FormID")
+            .map((key, index) => (
+              <div key={index} className="mb-4">
+                <label className="block font-medium mb-1 text-lg">{`Question ${
+                  index + 1
+                }:`}</label>
+                <textarea
+                  name={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  rows="3"
+                  className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
+                  placeholder={formData[key]}
+                />
+              </div>
+            ))}
 
-        {/* Submit and New Buttons */}
-        <button
-          type="submit"
-          style={{ marginTop: "10px", cursor: "pointer", padding: "10px 15px" }}
-        >
-          Submit Questionnaire
-        </button>
-
-        {formSubmitted && (
+          {/* Submit and New Buttons */}
           <button
-            type="button"
-            onClick={handleNewQuestionnaire}
-            style={{
-              marginLeft: "10px",
-              cursor: "pointer",
-              padding: "10px 15px",
-            }}
+            type="submit"
+            className="w-full py-3 mt-6 bg-green-500 text-white rounded-lg text-lg hover:bg-green-600 transition"
           >
-            New
+            Submit Questionnaire
           </button>
-        )}
-      </form>
+
+          {formSubmitted && (
+            <button
+              type="button"
+              onClick={handleNewQuestionnaire}
+              className="w-full py-3 mt-2 bg-gray-500 text-white rounded-lg text-lg hover:bg-gray-600 transition"
+            >
+              New
+            </button>
+          )}
+        </form>
+      </div>
     </div>
   );
 }
