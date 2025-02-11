@@ -12,9 +12,6 @@ console.log("✅ App.jsx is rendering...");
 export function App() {
   return (
     <div>
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <h1>HR Portal App</h1> {/* This is now centered */}
-      </div>
       <Routes>
         <Route exact path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
