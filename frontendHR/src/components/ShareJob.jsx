@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function ShareJob() {
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   // Mock job postings data (Replace with backend fetch later)
   const jobPostings = [
@@ -13,28 +13,15 @@ export function ShareJob() {
       Info3: "$120,000 per year",
       Info4: "5+ years experience required",
       Info5: "Remote Work Available",
-      Info6: "Additional Info 1",
-      Info7: "Additional Info 2",
-      Info8: "Additional Info 3",
-      Info9: "Additional Info 4",
-      Info10: "Additional Info 5",
-    },
-    {
-      JobID: "JOB456",
-      Info1: "San Francisco, USA",
-      Info2: "Data Scientist Role",
-      Info3: "$135,000 per year",
-      Info4: "3+ years experience required",
-      Info5: "Hybrid Work Model",
-      Info6: "Machine Learning focus",
-      Info7: "Additional Info 2",
-      Info8: "Additional Info 3",
-      Info9: "Additional Info 4",
-      Info10: "Additional Info 5",
+      Info6: "Flexible work hours",
+      Info7: "Health & wellness benefits",
+      Info8: "Stock options available",
+      Info9: "Visa sponsorship available",
+      Info10: "Fast-paced work environment",
     },
   ];
 
-  // Mock questionnaire data (Replace with backend fetch later)
+  // Mock questionnaire data
   const questionnaires = [
     {
       FormID: "FORM001",
@@ -49,37 +36,14 @@ export function ShareJob() {
       Question9: "Are you available for full-time work?",
       Question10: "Do you have experience with agile methodologies?",
     },
-    {
-      FormID: "FORM002",
-      Question1: "Do you have experience with SQL?",
-      Question2: "Can you work in a team environment?",
-      Question3: "Have you managed projects before?",
-      Question4: "How do you approach problem-solving?",
-      Question5: "Are you familiar with version control?",
-      Question6: "Do you have experience with Kubernetes?",
-      Question7: "Have you worked in a startup environment?",
-      Question8: "How comfortable are you with automation?",
-      Question9: "Are you open to relocation?",
-      Question10: "What are your salary expectations?",
-    },
   ];
 
   const [selectedJobId, setSelectedJobId] = useState("");
   const [selectedFormId, setSelectedFormId] = useState("");
   const [jobDetails, setJobDetails] = useState(null);
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({
-    Answer1: "",
-    Answer2: "",
-    Answer3: "",
-    Answer4: "",
-    Answer5: "",
-    Answer6: "",
-    Answer7: "",
-    Answer8: "",
-    Answer9: "",
-    Answer10: "",
-  });
+  const [expanded, setExpanded] = useState(false);
+  const [finalSubmit, setFinalSubmit] = useState(false);
 
   // Handle dropdown selection
   const handleJobChange = (e) => {
@@ -109,53 +73,52 @@ export function ShareJob() {
 
     setJobDetails(jobData);
     setQuestions(questionData);
+    setExpanded(true); // Expand the card dynamically
   };
 
-  // Handle input changes for answers (kept for UI display)
-  const handleAnswerChange = (e) => {
-    setAnswers({ ...answers, [e.target.name]: e.target.value });
-  };
-
-  // Submit application (Now sending only JobID & FormID)
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    const finalSubmission = {
-      JobID: selectedJobId,
-      FormID: selectedFormId,
-    };
-    console.log("Job Application Submitted:", finalSubmission);
+    setFinalSubmit(true); // Expand card a bit more
     alert("Job Application Submitted Successfully!");
   };
 
   return (
     <div
-      style={{ textAlign: "center", marginTop: "20px", position: "relative" }}
+      className="relative min-h-screen bg-cover bg-center flex justify-center items-center"
+      style={{
+        backgroundImage:
+          "url('https://www.shutterstock.com/image-vector/vector-business-illustration-small-people-260nw-1022567779.jpg')",
+      }}
     >
-      {/* Dashboard Button */}
+      {/* ✅ Dashboard Button Positioned at Top-Left */}
       <button
         onClick={() => navigate("/dashboard")}
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          padding: "5px 10px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
+        className="absolute top-4 left-4 px-4 py-2 text-lg bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
       >
         ⬅️ Dashboard
       </button>
 
-      <h2>Share Job</h2>
+      {/* ✅ Dynamic Expanding & Scrollable Card */}
+      <div
+        className={`bg-white bg-opacity-90 shadow-lg rounded-xl p-8 w-full max-w-3xl transition-all duration-500 ${
+          finalSubmit ? "h-[700px]" : expanded ? "h-[550px]" : "h-[400px]"
+        } overflow-y-auto`}
+      >
+        {/* ✅ Styled "Share Job" Heading to Match HireEasy */}
+        <h2 className="text-4xl font-bold text-gray-800 tracking-wide font-sans text-center mb-8">
+          Share Job
+        </h2>
 
-      {/* Dropdowns for Job ID and Form ID */}
-      <div style={{ maxWidth: "600px", margin: "auto" }}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Select Job ID: </label>
+        {/* Dropdowns for Job ID and Form ID */}
+        <div className="mb-6">
+          <label className="block font-medium mb-2 text-lg">
+            Select Job ID:
+          </label>
           <select
             value={selectedJobId}
             onChange={handleJobChange}
-            style={{ width: "100%", padding: "8px", fontSize: "16px" }}
+            className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
           >
             <option value="">-- Select Job ID --</option>
             {jobPostings.map((job) => (
@@ -166,12 +129,14 @@ export function ShareJob() {
           </select>
         </div>
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>Select Form ID: </label>
+        <div className="mb-6">
+          <label className="block font-medium mb-2 text-lg">
+            Select Form ID:
+          </label>
           <select
             value={selectedFormId}
             onChange={handleFormChange}
-            style={{ width: "100%", padding: "8px", fontSize: "16px" }}
+            className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
           >
             <option value="">-- Select Form ID --</option>
             {questionnaires.map((form) => (
@@ -182,72 +147,43 @@ export function ShareJob() {
           </select>
         </div>
 
+        {/* ✅ Green Button for "Generate Job Application" */}
         <button
           onClick={fetchJobAndFormData}
-          style={{ cursor: "pointer", padding: "10px 15px", marginTop: "10px" }}
+          className="w-full py-3 bg-green-500 text-white text-lg rounded-lg hover:bg-green-600 transition"
         >
           Generate Job Application
         </button>
-      </div>
 
-      {/* Display Job Details and Questionnaire */}
-      {jobDetails && questions && (
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            maxWidth: "600px",
-            margin: "auto",
-            marginTop: "20px",
-            textAlign: "left",
-          }}
-        >
-          <h3>Job Details</h3>
-          <p>
-            <strong>Job ID:</strong> {jobDetails.JobID}
-          </p>
-          {Object.keys(jobDetails)
-            .filter((key) => key !== "JobID")
-            .map((key, index) => (
-              <p key={index}>
-                <strong>Info {index + 1}:</strong> {jobDetails[key]}
+        {/* ✅ Expanding Job Details and Questionnaire Section */}
+        {expanded && jobDetails && questions && (
+          <form onSubmit={handleSubmit} className="mt-6">
+            <h3 className="text-2xl font-semibold">Job Details</h3>
+            {Object.keys(jobDetails).map((key, index) => (
+              <p key={index} className="text-lg">
+                <strong>{key.replace("Info", "Detail")}:</strong>{" "}
+                {jobDetails[key]}
               </p>
             ))}
 
-          <h3>Job Questionnaire</h3>
-          {Object.keys(questions)
-            .filter((key) => key !== "FormID")
-            .map((key, index) => (
-              <div key={index} style={{ marginBottom: "10px" }}>
-                <p>
-                  <strong>Question {index + 1}:</strong> {questions[key]}
-                </p>
-                <textarea
-                  name={`Answer${index + 1}`}
-                  value={answers[`Answer${index + 1}`]}
-                  onChange={handleAnswerChange}
-                  rows="2"
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    fontSize: "16px",
-                    resize: "none",
-                  }}
-                />
-              </div>
+            <h3 className="text-2xl font-semibold mt-6">Job Questionnaire</h3>
+            {Object.keys(questions).map((key, index) => (
+              <p key={index} className="text-lg">
+                <strong>{key.replace("Question", "Q")}: </strong>
+                {questions[key]}
+              </p>
             ))}
 
-          <button
-            type="submit"
-            style={{
-              marginTop: "10px",
-              cursor: "pointer",
-              padding: "10px 15px",
-            }}
-          >
-            Submit Application
-          </button>
-        </form>
-      )}
+            {/* ✅ Submit Button Expands the Card a Bit More */}
+            <button
+              type="submit"
+              className="w-full py-3 bg-green-500 text-white text-lg rounded-lg hover:bg-green-600 transition mt-4"
+            >
+              Submit Job Application
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
