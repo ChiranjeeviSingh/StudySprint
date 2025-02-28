@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function ShareJob() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook for navigation
 
   // Mock job postings data (Replace with backend fetch later)
   const jobPostings = [
@@ -13,28 +13,100 @@ export function ShareJob() {
       Info3: "$120,000 per year",
       Info4: "5+ years experience required",
       Info5: "Remote Work Available",
-      Info6: "Flexible work hours",
-      Info7: "Health & wellness benefits",
-      Info8: "Stock options available",
-      Info9: "Visa sponsorship available",
-      Info10: "Fast-paced work environment",
+    },
+    {
+      JobID: "JOB456",
+      Info1: "San Francisco, USA",
+      Info2: "Data Scientist Role",
+      Info3: "$135,000 per year",
+      Info4: "3+ years experience required",
+      Info5: "Hybrid Work Model",
     },
   ];
 
-  // Mock questionnaire data
+  // Updated mock questionnaire data with TWO FORMS
   const questionnaires = [
     {
       FormID: "FORM001",
-      Question1: "Do you have experience with React?",
-      Question2: "Are you familiar with Python?",
-      Question3: "Have you worked with databases before?",
-      Question4: "Do you have experience with cloud platforms?",
-      Question5: "Are you comfortable with remote work?",
-      Question6: "Do you have leadership experience?",
-      Question7: "How do you handle tight deadlines?",
-      Question8: "What is your preferred development environment?",
-      Question9: "Are you available for full-time work?",
-      Question10: "Do you have experience with agile methodologies?",
+      Questions: [
+        {
+          id: "Q_Gender",
+          text: "What is your gender?",
+          type: "radio",
+          options: ["Male", "Female", "Other"],
+        },
+        {
+          id: "Q_Education",
+          text: "Education Level",
+          type: "text",
+          options: [],
+        },
+        {
+          id: "Q_Skills",
+          text: "Which programming languages do you know?",
+          type: "checkbox",
+          options: ["JavaScript", "Python", "C++"],
+        },
+        {
+          id: "Q_Experience",
+          text: "Work Experience (Years)",
+          type: "text",
+          options: [],
+        },
+        {
+          id: "Q_Resume",
+          text: "Upload your resume",
+          type: "file",
+          options: [],
+        },
+        {
+          id: "Q6",
+          text: "What is your expected salary?",
+          type: "text",
+          options: [],
+        },
+      ],
+    },
+    {
+      FormID: "FORM002",
+      Questions: [
+        {
+          id: "Q_Gender",
+          text: "What is your gender?",
+          type: "radio",
+          options: ["Male", "Female", "Other"],
+        },
+        {
+          id: "Q_Certification",
+          text: "List any certifications",
+          type: "text",
+          options: [],
+        },
+        {
+          id: "Q_Languages",
+          text: "Which languages do you speak?",
+          type: "checkbox",
+          options: ["English", "Spanish", "French"],
+        },
+        {
+          id: "Q_Experience",
+          text: "Describe your work experience",
+          type: "text",
+          options: [],
+        },
+        {
+          id: "Q_Portfolio",
+          text: "Upload your portfolio",
+          type: "file",
+          options: [],
+        },
+        {
+          id: "Q9",
+          text: "Where do you see yourself in 5 years?",
+          type: "text",
+          options: [],
+        },
+      ],
     },
   ];
 
@@ -42,17 +114,11 @@ export function ShareJob() {
   const [selectedFormId, setSelectedFormId] = useState("");
   const [jobDetails, setJobDetails] = useState(null);
   const [questions, setQuestions] = useState(null);
-  const [expanded, setExpanded] = useState(false);
-  const [finalSubmit, setFinalSubmit] = useState(false);
+  const [answers, setAnswers] = useState({});
 
   // Handle dropdown selection
-  const handleJobChange = (e) => {
-    setSelectedJobId(e.target.value);
-  };
-
-  const handleFormChange = (e) => {
-    setSelectedFormId(e.target.value);
-  };
+  const handleJobChange = (e) => setSelectedJobId(e.target.value);
+  const handleFormChange = (e) => setSelectedFormId(e.target.value);
 
   // Fetch job and form data after selecting both IDs
   const fetchJobAndFormData = () => {
@@ -73,52 +139,68 @@ export function ShareJob() {
 
     setJobDetails(jobData);
     setQuestions(questionData);
-    setExpanded(true); // Expand the card dynamically
   };
 
-  // Handle form submission
+  // Handle input changes
+  const handleAnswerChange = (e, question) => {
+    const { type, value, checked, files } = e.target;
+    const questionId = question.id;
+
+    if (type === "checkbox") {
+      setAnswers((prev) => ({
+        ...prev,
+        [questionId]: checked
+          ? [...(prev[questionId] || []), value]
+          : prev[questionId].filter((item) => item !== value),
+      }));
+    } else if (type === "file") {
+      setAnswers({ ...answers, [questionId]: files[0].name }); // Just storing file name
+    } else {
+      setAnswers({ ...answers, [questionId]: value });
+    }
+  };
+
+  // Submit application (Now sending only JobID & FormID)
   const handleSubmit = (e) => {
     e.preventDefault();
-    setFinalSubmit(true); // Expand card a bit more
+    const finalSubmission = {
+      JobID: selectedJobId,
+      FormID: selectedFormId,
+      Responses: answers, // Making sure we capture all responses correctly
+    };
+    console.log("Job Application Submitted:", finalSubmission);
     alert("Job Application Submitted Successfully!");
   };
 
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center flex justify-center items-center"
-      style={{
-        backgroundImage:
-          "url('https://www.shutterstock.com/image-vector/vector-business-illustration-small-people-260nw-1022567779.jpg')",
-      }}
+      style={{ textAlign: "center", marginTop: "20px", position: "relative" }}
     >
-      {/* ✅ Dashboard Button Positioned at Top-Left */}
+      {/* Dashboard Button */}
       <button
         onClick={() => navigate("/dashboard")}
-        className="absolute top-4 left-4 px-4 py-2 text-lg bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+        style={{
+          position: "absolute",
+          top: "10px",
+          left: "10px",
+          padding: "5px 10px",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
       >
         ⬅️ Dashboard
       </button>
 
-      {/* ✅ Dynamic Expanding & Scrollable Card */}
-      <div
-        className={`bg-white bg-opacity-90 shadow-lg rounded-xl p-8 w-full max-w-3xl transition-all duration-500 ${
-          finalSubmit ? "h-[700px]" : expanded ? "h-[550px]" : "h-[400px]"
-        } overflow-y-auto`}
-      >
-        {/* ✅ Styled "Share Job" Heading to Match HireEasy */}
-        <h2 className="text-4xl font-bold text-gray-800 tracking-wide font-sans text-center mb-8">
-          Share Job
-        </h2>
+      <h2>Share Job</h2>
 
-        {/* Dropdowns for Job ID and Form ID */}
-        <div className="mb-6">
-          <label className="block font-medium mb-2 text-lg">
-            Select Job ID:
-          </label>
+      {/* Dropdowns for Job ID and Form ID */}
+      <div style={{ maxWidth: "600px", margin: "auto" }}>
+        <div style={{ marginBottom: "10px" }}>
+          <label>Select Job ID: </label>
           <select
             value={selectedJobId}
             onChange={handleJobChange}
-            className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
+            style={{ width: "100%", padding: "8px", fontSize: "16px" }}
           >
             <option value="">-- Select Job ID --</option>
             {jobPostings.map((job) => (
@@ -129,14 +211,12 @@ export function ShareJob() {
           </select>
         </div>
 
-        <div className="mb-6">
-          <label className="block font-medium mb-2 text-lg">
-            Select Form ID:
-          </label>
+        <div style={{ marginBottom: "10px" }}>
+          <label>Select Form ID: </label>
           <select
             value={selectedFormId}
             onChange={handleFormChange}
-            className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
+            style={{ width: "100%", padding: "8px", fontSize: "16px" }}
           >
             <option value="">-- Select Form ID --</option>
             {questionnaires.map((form) => (
@@ -147,43 +227,88 @@ export function ShareJob() {
           </select>
         </div>
 
-        {/* ✅ Green Button for "Generate Job Application" */}
         <button
           onClick={fetchJobAndFormData}
-          className="w-full py-3 bg-green-500 text-white text-lg rounded-lg hover:bg-green-600 transition"
+          style={{ cursor: "pointer", padding: "10px 15px", marginTop: "10px" }}
         >
           Generate Job Application
         </button>
+      </div>
 
-        {/* ✅ Expanding Job Details and Questionnaire Section */}
-        {expanded && jobDetails && questions && (
-          <form onSubmit={handleSubmit} className="mt-6">
-            <h3 className="text-2xl font-semibold">Job Details</h3>
-            {Object.keys(jobDetails).map((key, index) => (
-              <p key={index} className="text-lg">
-                <strong>{key.replace("Info", "Detail")}:</strong>{" "}
+      {/* Display Job Details and Questionnaire */}
+      {jobDetails && questions && (
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            maxWidth: "600px",
+            margin: "auto",
+            marginTop: "20px",
+            textAlign: "left",
+          }}
+        >
+          <h3>Job Details</h3>
+          <p>
+            <strong>Job ID:</strong> {jobDetails.JobID}
+          </p>
+
+          {/* Display all job details dynamically */}
+          {Object.keys(jobDetails)
+            .filter((key) => key !== "JobID") // Exclude JobID as it's already displayed
+            .map((key, index) => (
+              <p key={index}>
+                <strong>{key.replace("Info", "Detail ")}:</strong>{" "}
                 {jobDetails[key]}
               </p>
             ))}
 
-            <h3 className="text-2xl font-semibold mt-6">Job Questionnaire</h3>
-            {Object.keys(questions).map((key, index) => (
-              <p key={index} className="text-lg">
-                <strong>{key.replace("Question", "Q")}: </strong>
-                {questions[key]}
+          <h3>Job Questionnaire</h3>
+          {questions.Questions.map((question) => (
+            <div key={question.id} style={{ marginBottom: "10px" }}>
+              <p>
+                <strong>{question.text}</strong>
               </p>
-            ))}
 
-            {/* ✅ Submit Button Expands the Card a Bit More */}
-            <button
-              type="submit"
-              className="w-full py-3 bg-green-500 text-white text-lg rounded-lg hover:bg-green-600 transition mt-4"
-            >
-              Submit Job Application
-            </button>
-          </form>
-        )}
-      </div>
+              {question.type === "text" && (
+                <input
+                  type="text"
+                  onChange={(e) => handleAnswerChange(e, question)}
+                />
+              )}
+              {question.type === "radio" &&
+                question.options.map((opt) => (
+                  <label key={opt}>
+                    <input
+                      type="radio"
+                      name={question.id}
+                      value={opt}
+                      onChange={(e) => handleAnswerChange(e, question)}
+                    />{" "}
+                    {opt}
+                  </label>
+                ))}
+              {question.type === "checkbox" &&
+                question.options.map((opt) => (
+                  <label key={opt}>
+                    <input
+                      type="checkbox"
+                      value={opt}
+                      onChange={(e) => handleAnswerChange(e, question)}
+                    />{" "}
+                    {opt}
+                  </label>
+                ))}
+              {question.type === "file" && (
+                <input
+                  type="file"
+                  onChange={(e) => handleAnswerChange(e, question)}
+                />
+              )}
+            </div>
+          ))}
+
+          <button type="submit">Submit Application</button>
+        </form>
+      )}
     </div>
   );
 }

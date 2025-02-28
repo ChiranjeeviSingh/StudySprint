@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import JobPosting from "./components/JobPosting.jsx";
 import Questionnaire from "./components/Questionnaire.jsx";
 import ShareJob from "./components/ShareJob.jsx";
+import PastJobs from "./components/PastJobs.jsx";
 import Register from "./components/Register.jsx";
 
 console.log("✅ App.jsx is rendering...");
@@ -19,6 +20,7 @@ export function App() {
         <Route path="/job-posting" element={<JobPosting />} />
         <Route path="/questionnaire" element={<Questionnaire />} />
         <Route path="/share-job" element={<ShareJob />} />
+        <Route path="/past-jobs" element={<PastJobs />} />
       </Routes>
     </div>
   );

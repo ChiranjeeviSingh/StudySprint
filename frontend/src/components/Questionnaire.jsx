@@ -4,33 +4,71 @@ import { useNavigate } from "react-router-dom";
 export function Questionnaire() {
   const navigate = useNavigate(); // Hook for navigation
 
-  // Initial form state
+  // Initial state: Questions & their options
   const initialState = {
     FormID: "",
-    Question1: "Do you have experience with React?",
-    Question2: "Are you familiar with Python?",
-    Question3: "Have you worked with databases before?",
-    Question4: "Do you have experience with cloud platforms?",
-    Question5: "Are you comfortable with remote work?",
-    Question6: "Do you have leadership experience?",
-    Question7: "How do you handle tight deadlines?",
-    Question8: "What is your preferred development environment?",
-    Question9: "Are you available for full-time work?",
-    Question10: "Do you have experience with agile methodologies?",
+    Questions: [
+      {
+        id: "Q_Gender",
+        text: "What is your gender?",
+        type: "radio",
+        options: ["Male", "Female", "Other"],
+      },
+      { id: "Q_Education", text: "Education Level", type: "text", options: [] },
+      {
+        id: "Q_Skills",
+        text: "Which programming languages do you know?",
+        type: "checkbox",
+        options: ["JavaScript", "Python", "C++"],
+      },
+      {
+        id: "Q_Experience",
+        text: "Work Experience (Years)",
+        type: "text",
+        options: [],
+      },
+      { id: "Q_Resume", text: "Upload your resume", type: "file", options: [] },
+      {
+        id: "Q6",
+        text: "What is your expected salary?",
+        type: "text",
+        options: [],
+      },
+      { id: "Q7", text: "", type: "text", options: [] },
+      { id: "Q8", text: "", type: "text", options: [] },
+      { id: "Q9", text: "", type: "text", options: [] },
+      { id: "Q10", text: "", type: "text", options: [] },
+    ],
   };
 
   const [formData, setFormData] = useState(initialState);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Handle input changes
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // Handle input changes (Question text or options)
+  const handleChange = (e, index, isOption = false, optionIndex = null) => {
+    const updatedQuestions = [...formData.Questions];
+
+    if (isOption) {
+      // Update specific option for a question
+      updatedQuestions[index].options[optionIndex] = e.target.value;
+    } else {
+      updatedQuestions[index].text = e.target.value;
+    }
+
+    setFormData({ ...formData, Questions: updatedQuestions });
+  };
+
+  // Add new option for multiple-choice questions
+  const addOption = (index) => {
+    const updatedQuestions = [...formData.Questions];
+    updatedQuestions[index].options.push("");
+    setFormData({ ...formData, Questions: updatedQuestions });
   };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Questionnaire Submitted:", formData);
+    console.log("Questionnaire Created:", formData);
     alert("Questionnaire Created Successfully!");
     setFormSubmitted(true);
   };
@@ -43,81 +81,109 @@ export function Questionnaire() {
 
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center flex justify-center items-center"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8am9iJTIwcG9ydGFsfGVufDB8fDB8fHww')",
-      }}
+      style={{ textAlign: "center", marginTop: "20px", position: "relative" }}
     >
-      {/* ✅ Dashboard Button Positioned at Top-Left */}
+      {/* Dashboard Button */}
       <button
         onClick={() => navigate("/dashboard")}
-        className="absolute top-4 left-4 px-4 py-2 text-lg bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+        style={{
+          position: "absolute",
+          top: "10px",
+          left: "10px",
+          padding: "5px 10px",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
       >
         ⬅️ Dashboard
       </button>
 
-      {/* ✅ Enlarged Card Layout for the Form */}
-      <div className="bg-white bg-opacity-90 shadow-lg rounded-xl p-10 w-full max-w-2xl h-[700px] overflow-y-auto">
-        <h2 className="text-3xl font-semibold text-center mb-8">
-          Create a Questionnaire
-        </h2>
+      <h2>Create a Job Questionnaire</h2>
 
-        <form onSubmit={handleSubmit}>
-          {/* Form ID Input */}
-          <div className="mb-4">
-            <label className="block font-medium mb-1 text-lg">
-              Form ID (Required):
-            </label>
+      <form
+        onSubmit={handleSubmit}
+        style={{ maxWidth: "600px", margin: "auto" }}
+      >
+        {/* Form ID Input */}
+        <div style={{ marginBottom: "10px" }}>
+          <label>Form ID (Required): </label>
+          <input
+            type="text"
+            name="FormID"
+            value={formData.FormID}
+            onChange={(e) =>
+              setFormData({ ...formData, FormID: e.target.value })
+            }
+            required
+            style={{ width: "100%", padding: "8px", fontSize: "16px" }}
+          />
+        </div>
+
+        {/* Dynamic Question Inputs */}
+        {formData.Questions.map((question, index) => (
+          <div key={question.id} style={{ marginBottom: "10px" }}>
+            <label>{`Question ${index + 1}:`}</label>
             <input
               type="text"
-              name="FormID"
-              value={formData.FormID}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter Form ID"
+              value={question.text}
+              onChange={(e) => handleChange(e, index)}
+              style={{ width: "100%", padding: "8px", fontSize: "16px" }}
             />
-          </div>
 
-          {/* Questions as Textareas */}
-          {Object.keys(formData)
-            .filter((key) => key !== "FormID")
-            .map((key, index) => (
-              <div key={index} className="mb-4">
-                <label className="block font-medium mb-1 text-lg">{`Question ${
-                  index + 1
-                }:`}</label>
-                <textarea
-                  name={key}
-                  value={formData[key]}
-                  onChange={handleChange}
-                  rows="3"
-                  className="w-full p-3 border border-gray-500 rounded-lg text-lg focus:ring-2 focus:ring-blue-400"
-                  placeholder={formData[key]}
-                />
+            {/* Multiple choice (radio/checkbox) options */}
+            {(question.type === "radio" || question.type === "checkbox") && (
+              <div>
+                {question.options.map((option, optionIndex) => (
+                  <input
+                    key={optionIndex}
+                    type="text"
+                    value={option}
+                    onChange={(e) => handleChange(e, index, true, optionIndex)}
+                    placeholder={`Option ${optionIndex + 1}`}
+                    style={{ width: "80%", padding: "5px", marginTop: "5px" }}
+                  />
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addOption(index)}
+                  style={{ marginLeft: "5px", padding: "5px 10px" }}
+                >
+                  ➕ Add Option
+                </button>
               </div>
-            ))}
+            )}
 
-          {/* Submit and New Buttons */}
+            {/* File Upload Notice */}
+            {question.type === "file" && (
+              <p style={{ fontSize: "14px", color: "gray" }}>
+                This question requires candidates to upload a file.
+              </p>
+            )}
+          </div>
+        ))}
+
+        {/* Submit and New Buttons */}
+        <button
+          type="submit"
+          style={{ marginTop: "10px", cursor: "pointer", padding: "10px 15px" }}
+        >
+          Submit Questionnaire
+        </button>
+
+        {formSubmitted && (
           <button
-            type="submit"
-            className="w-full py-3 mt-6 bg-green-500 text-white rounded-lg text-lg hover:bg-green-600 transition"
+            type="button"
+            onClick={handleNewQuestionnaire}
+            style={{
+              marginLeft: "10px",
+              cursor: "pointer",
+              padding: "10px 15px",
+            }}
           >
-            Submit Questionnaire
+            New
           </button>
-
-          {formSubmitted && (
-            <button
-              type="button"
-              onClick={handleNewQuestionnaire}
-              className="w-full py-3 mt-2 bg-gray-500 text-white rounded-lg text-lg hover:bg-gray-600 transition"
-            >
-              New
-            </button>
-          )}
-        </form>
-      </div>
+        )}
+      </form>
     </div>
   );
 }
