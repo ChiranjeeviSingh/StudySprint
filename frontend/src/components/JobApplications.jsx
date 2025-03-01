@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function PastJobs() {
+export function JobApplications() {
   const navigate = useNavigate();
 
   // Mock job applications data (JobID -> Candidates -> Responses)
@@ -50,7 +50,7 @@ export function PastJobs() {
 
   const [selectedJobId, setSelectedJobId] = useState("");
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [minExperience, setMinExperience] = useState(0); // New filter state
+  const [minExperience, setMinExperience] = useState(0); // Experience filter state
 
   // Handle job selection
   const handleJobChange = (e) => {
@@ -103,7 +103,7 @@ export function PastJobs() {
         ⬅️ Dashboard
       </button>
 
-      <h2>Past Job Applications</h2>
+      <h2>Job Applications</h2>
 
       {/* Job ID Selection */}
       <div style={{ marginBottom: "20px" }}>
@@ -199,4 +199,4 @@ export function PastJobs() {
   );
 }
 
-export default PastJobs;
+export default JobApplications;

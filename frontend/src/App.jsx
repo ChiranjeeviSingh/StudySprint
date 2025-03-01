@@ -5,10 +5,11 @@ import Dashboard from "./pages/Dashboard.jsx";
 import JobPosting from "./components/JobPosting.jsx";
 import Questionnaire from "./components/Questionnaire.jsx";
 import ShareJob from "./components/ShareJob.jsx";
-import PastJobs from "./components/PastJobs.jsx";
+import JobApplications from "./components/JobApplications.jsx";
+import ViewJobs from "./components/ViewJobs.jsx"; // New import
 import Register from "./components/Register.jsx";
 
-console.log("✅ App.jsx is rendering...");
+console.log("App.jsx is rendering...");
 
 export function App() {
   return (
@@ -20,7 +21,8 @@ export function App() {
         <Route path="/job-posting" element={<JobPosting />} />
         <Route path="/questionnaire" element={<Questionnaire />} />
         <Route path="/share-job" element={<ShareJob />} />
-        <Route path="/past-jobs" element={<PastJobs />} />
+        <Route path="/job-applications" element={<JobApplications />} />
+        <Route path="/view-jobs" element={<ViewJobs />} /> {/* New Route */}
       </Routes>
     </div>
   );

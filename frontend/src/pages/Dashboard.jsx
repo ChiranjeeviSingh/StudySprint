@@ -30,8 +30,15 @@ export function Dashboard() {
           Share Job
         </button>
 
-        <button onClick={() => navigate("/past-jobs")} style={buttonStyle}>
-          Past Jobs
+        <button
+          onClick={() => navigate("/job-applications")}
+          style={buttonStyle}
+        >
+          View Job Applications
+        </button>
+
+        <button onClick={() => navigate("/view-jobs")} style={buttonStyle}>
+          View Jobs
         </button>
       </div>
     </div>

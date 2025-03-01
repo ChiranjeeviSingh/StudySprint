@@ -114,7 +114,6 @@ export function ShareJob() {
   const [selectedFormId, setSelectedFormId] = useState("");
   const [jobDetails, setJobDetails] = useState(null);
   const [questions, setQuestions] = useState(null);
-  const [answers, setAnswers] = useState({});
 
   // Handle dropdown selection
   const handleJobChange = (e) => setSelectedJobId(e.target.value);
@@ -141,35 +140,15 @@ export function ShareJob() {
     setQuestions(questionData);
   };
 
-  // Handle input changes
-  const handleAnswerChange = (e, question) => {
-    const { type, value, checked, files } = e.target;
-    const questionId = question.id;
-
-    if (type === "checkbox") {
-      setAnswers((prev) => ({
-        ...prev,
-        [questionId]: checked
-          ? [...(prev[questionId] || []), value]
-          : prev[questionId].filter((item) => item !== value),
-      }));
-    } else if (type === "file") {
-      setAnswers({ ...answers, [questionId]: files[0].name }); // Just storing file name
-    } else {
-      setAnswers({ ...answers, [questionId]: value });
+  // Handle share button click (show dummy share link)
+  const handleShare = () => {
+    if (!selectedJobId || !selectedFormId) {
+      alert("Please select both a Job ID and a Form ID.");
+      return;
     }
-  };
 
-  // Submit application (Now sending only JobID & FormID)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const finalSubmission = {
-      JobID: selectedJobId,
-      FormID: selectedFormId,
-      Responses: answers, // Making sure we capture all responses correctly
-    };
-    console.log("Job Application Submitted:", finalSubmission);
-    alert("Job Application Submitted Successfully!");
+    const shareableLink = `https://hireeasy.com/apply?job=${selectedJobId}&form=${selectedFormId}`;
+    alert(`Share using this link:\n${shareableLink}`);
   };
 
   return (
@@ -237,8 +216,7 @@ export function ShareJob() {
 
       {/* Display Job Details and Questionnaire */}
       {jobDetails && questions && (
-        <form
-          onSubmit={handleSubmit}
+        <div
           style={{
             maxWidth: "600px",
             margin: "auto",
@@ -268,46 +246,36 @@ export function ShareJob() {
                 <strong>{question.text}</strong>
               </p>
 
-              {question.type === "text" && (
-                <input
-                  type="text"
-                  onChange={(e) => handleAnswerChange(e, question)}
-                />
-              )}
+              {question.type === "text" && <input type="text" />}
               {question.type === "radio" &&
                 question.options.map((opt) => (
                   <label key={opt}>
-                    <input
-                      type="radio"
-                      name={question.id}
-                      value={opt}
-                      onChange={(e) => handleAnswerChange(e, question)}
-                    />{" "}
-                    {opt}
+                    <input type="radio" name={question.id} value={opt} /> {opt}
                   </label>
                 ))}
               {question.type === "checkbox" &&
                 question.options.map((opt) => (
                   <label key={opt}>
-                    <input
-                      type="checkbox"
-                      value={opt}
-                      onChange={(e) => handleAnswerChange(e, question)}
-                    />{" "}
-                    {opt}
+                    <input type="checkbox" value={opt} /> {opt}
                   </label>
                 ))}
-              {question.type === "file" && (
-                <input
-                  type="file"
-                  onChange={(e) => handleAnswerChange(e, question)}
-                />
-              )}
+              {question.type === "file" && <input type="file" />}
             </div>
           ))}
 
-          <button type="submit">Submit Application</button>
-        </form>
+          {/* Share Button */}
+          <button
+            type="button"
+            onClick={handleShare}
+            style={{
+              marginTop: "10px",
+              cursor: "pointer",
+              padding: "10px 15px",
+            }}
+          >
+            Share
+          </button>
+        </div>
       )}
     </div>
   );
