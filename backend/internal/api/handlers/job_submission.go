@@ -19,18 +19,31 @@ import (
 
 // HandleFormSubmission processes a form submission
 func HandleFormSubmission(c *gin.Context) {
+	var submission models.FormSubmissionRequest
+	// Bind form data
+	// Print all form values for debugging
+	formValues, _ := c.MultipartForm()
+	log.Println("🔍 Raw Form Data Received:", formValues.Value)
+
+	// Bind the form data
+	if err := c.ShouldBind(&submission); err != nil {
+		log.Println("Error Binding Form:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid submission data", "details": err.Error()})
+		return
+	}
+
 	// Get the job_id parameter
-	jobID, err := strconv.Atoi(c.PostForm("job_id"))
+	jobID, err := strconv.Atoi(submission.JobID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid job_id"})
 		return
 	}
 
 	// Get the user ID if provided, otherwise generate a temporary one
+	var userID int
 	userIDStr := c.PostForm("user_id")
 	log.Println("Extracted UserID:", userIDStr)
 
-	var userID int
 	if userIDStr == "" {
 		// Generate a temporary user ID based on email hash or timestamp
 		// For simplicity, use current timestamp + random number for demo
@@ -38,12 +51,7 @@ func HandleFormSubmission(c *gin.Context) {
 		userID = 10000 + rand.Intn(90000) // 5-digit random number starting with 1
 		log.Printf("Generated temporary userID: %d", userID)
 	} else {
-		var err error
-		userID, err = strconv.Atoi(userIDStr)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID format"})
-			return
-		}
+		userID = submission.UserID
 	}
 	
 	log.Println(userID)
@@ -65,8 +73,8 @@ func HandleFormSubmission(c *gin.Context) {
 
 	if count < 1 {
 		// If user doesn't exist, create one with the provided information
-		username := c.PostForm("username")
-		email := c.PostForm("email")
+		username := submission.Username
+		email := submission.Email
 		
 		if username != "" && email != "" {
 			log.Printf("🆕 Creating new user: %d", userID)
@@ -84,6 +92,21 @@ func HandleFormSubmission(c *gin.Context) {
 			
 			_, err = db.Exec(query, userID, username, email, passwordHash)
 			if err != nil {
+				// Check if this is a unique constraint violation
+				if pqErr, ok := err.(*pq.Error); ok {
+					if pqErr.Code == "23505" { // unique_violation
+						if pqErr.Constraint == "users_username_key" {
+							log.Printf("Username already exists: %s", username)
+							c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
+							return
+						} else if pqErr.Constraint == "users_email_key" {
+							log.Printf("Email already exists: %s", email)
+							c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
+							return
+						}
+					}
+				}
+				
 				log.Printf("Failed to create user: %v", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 				return
@@ -119,19 +142,9 @@ func HandleFormSubmission(c *gin.Context) {
 		return
 	}
 
-	// Get form data as JSON string
-	formDataJSON := c.PostForm("form_data")
-	if formDataJSON == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Form data is required"})
-		return
-	}
-
-	// Log the raw form data received for debugging
-	log.Printf("🔍 Raw Form Data Received: %v", c.Request.PostForm)
-
 	// Parse form data to extract skills
 	var formData map[string]interface{}
-	if err := json.Unmarshal([]byte(formDataJSON), &formData); err != nil {
+	if err := json.Unmarshal([]byte(submission.FormData), &formData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data format"})
 		return
 	}
@@ -147,22 +160,16 @@ func HandleFormSubmission(c *gin.Context) {
 	}
 
 	// Handle file upload
-	file, err := c.FormFile("resume")
+	file := submission.Resume
 	
 	// Check if we're in test mode (no need for actual upload)
 	testMode := c.GetHeader("X-Test-Mode") == "true" || os.Getenv("TEST_MODE") == "true" || os.Getenv("S3_TEST_MODE") == "true"
 	var resumeURL string
 	
-	if err != nil && !testMode {
-		log.Println("No resume file provided:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Resume file is required"})
-		return
-	}
-
 	// Process the resume file (upload to S3, extract text, etc.)
 	if !testMode && file != nil {
 		// Get username from form
-		username := c.PostForm("username")
+		username := submission.Username
 		if username == "" {
 			username = "user" // Default if not provided
 		}
@@ -188,7 +195,7 @@ func HandleFormSubmission(c *gin.Context) {
 		INSERT INTO job_submissions (job_id, user_id, form_uuid, form_data, skills, resume_url, ats_score)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id
-	`, jobID, userID, formUUID, formDataJSON, pq.Array(extractedSkills), resumeURL, atsScore).Scan(&submissionID)
+	`, jobID, userID, formUUID, submission.FormData, pq.Array(extractedSkills), resumeURL, atsScore).Scan(&submissionID)
 
 	if err != nil {
 		log.Println("Database Insert Error:", err)
