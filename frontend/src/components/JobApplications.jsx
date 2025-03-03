@@ -97,7 +97,7 @@ export function JobApplications() {
       {/* ✅ Content Section (No Card, Just Structured Layout) */}
       <div className="flex-grow flex flex-col justify-center items-center mt-12 mb-20 px-6">
         <h2 className="text-4xl font-bold text-center text-gray-800 tracking-wide mb-8">
-          Job Applications
+        Job Applications
         </h2>
 
         {/* Job Selection */}
