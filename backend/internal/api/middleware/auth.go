@@ -7,6 +7,7 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/golang-jwt/jwt/v4"
     "backend/internal/config"
+    "regexp"
 )
 
 var (
@@ -41,7 +42,19 @@ func isPublicPath(path string) bool {
         "/api/login":    true,
         "/api/register": true,
     }
-    return publicPaths[path]
+
+    // Check if the path exactly matches a predefined public route
+    if publicPaths[path] {
+        return true
+    }
+
+    // Handle dynamic route matching for `/api/forms/:form_uuid`
+    match, _ := regexp.MatchString(`^/api/forms/[^/]+$`, path)
+    if match {
+        return true
+    }
+
+    return false
 }
 
 func validateToken(ctx *gin.Context, secret string) (int, error) {
