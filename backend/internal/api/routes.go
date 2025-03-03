@@ -34,6 +34,14 @@ func SetupRoutes(router *gin.Engine) {
         formTemplates.DELETE("/:form_template_id", handlers.DeleteFormTemplateH) // Delete template
     }
 
-    
+
+    // Application form routes
+    applicationForms := api.Group("")
+    {
+        applicationForms.POST("/jobs/:job_id/forms", handlers.LinkJobToFormTemplateH)   // Link job to form template, return unique URL and form_uuid
+        applicationForms.PATCH("/forms/:form_uuid/status", handlers.UpdateFormStatusH)  // Update form status (active/inactive)
+        applicationForms.GET("/forms/:form_uuid", handlers.GetFormDetailsH)             // Get job and form template details (unauthenticated)
+        applicationForms.DELETE("/forms/:form_uuid", handlers.DeleteFormH)              // Delete form and unlink from job
+    }
 
 }

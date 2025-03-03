@@ -32,6 +32,16 @@ CREATE TABLE form_templates (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE application_form (
+    form_uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),   -- Auto-generating unique UUID
+    job_id INT NOT NULL,                                     -- id of job table
+    form_id INT NOT NULL,                                    -- id of form_template table
+    status VARCHAR(50) NOT NULL DEFAULT 'active',            -- active, inactive
+    date_created TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,      -- Date when the form is created
+    FOREIGN KEY (job_id) REFERENCES jobs(id),                -- Foreign key reference to the jobs table
+    FOREIGN KEY (form_id) REFERENCES form_templates(id)      -- Foreign key reference to the form_templates table
+);
+
 
 -- Add indexes for common queries
 CREATE INDEX idx_jobs_user_id ON jobs(user_id);
