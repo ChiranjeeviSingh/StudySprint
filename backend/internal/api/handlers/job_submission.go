@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -25,24 +26,29 @@ func HandleFormSubmission(c *gin.Context) {
 		return
 	}
 
-	// Get the user ID for validation
+	// Get the user ID if provided, otherwise generate a temporary one
 	userIDStr := c.PostForm("user_id")
 	log.Println("Extracted UserID:", userIDStr)
 
+	var userID int
 	if userIDStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
-		return
-	}
-
-	userID, err := strconv.Atoi(userIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID"})
-		return
+		// Generate a temporary user ID based on email hash or timestamp
+		// For simplicity, use current timestamp + random number for demo
+		rand.Seed(time.Now().UnixNano())
+		userID = 10000 + rand.Intn(90000) // 5-digit random number starting with 1
+		log.Printf("Generated temporary userID: %d", userID)
+	} else {
+		var err error
+		userID, err = strconv.Atoi(userIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID format"})
+			return
+		}
 	}
 	
 	log.Println(userID)
 
-	// Verify the user exists and is valid
+	// Verify the user exists and is valid, or create if needed
 	var count int
 	log.Printf("🔍 Checking if user exists: %d", userID)
 	db := database.GetDB()
@@ -58,7 +64,7 @@ func HandleFormSubmission(c *gin.Context) {
 	log.Printf("🔍 Verified user count: %d Error: %v", count, err)
 
 	if count < 1 {
-		// If user doesn't exist, try to create one if we have the required info
+		// If user doesn't exist, create one with the provided information
 		username := c.PostForm("username")
 		email := c.PostForm("email")
 		
@@ -86,7 +92,7 @@ func HandleFormSubmission(c *gin.Context) {
 			log.Printf("User inserted successfully: %d", userID)
 			count = 1 // User now exists
 		} else {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Username and email are required"})
 			return
 		}
 	}

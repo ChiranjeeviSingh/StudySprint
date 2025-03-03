@@ -8,10 +8,11 @@ import (
 )
 
 // FormSubmissionRequest represents a job submission request from the frontend
+// Note: Only HR has accounts in the portal, regular applicants don't have user IDs
 
 type FormSubmissionRequest struct {
 	JobID    string                `form:"job_id" binding:"required"`
-	UserID   int                   `form:"user_id" binding:"required"`
+	UserID   int                   `form:"user_id"` // Made optional as applicants don't have user accounts
 	Username string                `form:"username" binding:"required"`
 	Email    string                `form:"email" binding:"required,email"`
 	Skills   []string              `form:"skills[]"` // Explicitly define skills as an array
