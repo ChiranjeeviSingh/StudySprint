@@ -22,6 +22,17 @@ CREATE TABLE jobs (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+
+CREATE TABLE form_templates (
+    id SERIAL PRIMARY KEY,
+    form_template_id VARCHAR(255) NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    fields JSONB NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Add indexes for common queries
 CREATE INDEX idx_jobs_user_id ON jobs(user_id);
 CREATE INDEX idx_jobs_id ON jobs(job_id);
